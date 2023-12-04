@@ -4,26 +4,27 @@ import Dropdown from '@/Components/Dropdown';
 import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { Link } from '@inertiajs/react';
+import Sidebar from '@/Components/Sidebar';
+import { defaultSidebarItems } from '@/Components/defaultSidebarLinks';
+import Navbar from '@/Components/Navbar';
 
 export default function Authenticated({ user, header, children }) {
+    const [collapsed, setCollapsed] = useState(false);
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
+
+    const ifCollapsed = collapsed ? "grid-cols-sidebar-collapsed " : "grid-cols-sidebar ";
 
     return (
         <div className="min-h-screen bg-gray-100">
             <nav className="bg-white border-b border-gray-100">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16">
                         <div className="flex">
                             <div className="shrink-0 flex items-center">
                                 <Link href="/">
-                                    <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800" />
+                                    {/* <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800" /> */}
+                                    <img className='h-9' src="images/logo-2.png" alt="LIVErary IT Solutions" />
                                 </Link>
-                            </div>
-
-                            <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink href={route('dashboard')} active={route().current('dashboard')}>
-                                    Dashboard
-                                </NavLink>
                             </div>
                         </div>
 
@@ -113,13 +114,21 @@ export default function Authenticated({ user, header, children }) {
                 </div>
             </nav>
 
-            {header && (
-                <header className="bg-white shadow">
-                    <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">{header}</div>
-                </header>
-            )}
+            <div className={'grid min-h-screen bg-gray-100 ' + ifCollapsed + 'transition[grid-template-columns] duration-300 ease-in-out'}>
+                {/* sidebar */}
+                <div className='bg-gray-700 text-white'>
+                    <Sidebar
+                        collapsed={collapsed}
+                        setCollapsed={() => setCollapsed((prev) => !prev)}
+                        sidebarLinks={defaultSidebarItems}
+                    />
+                    <button className="grid place-content-center hover:bg-gray-900 w-10 h-10 rounded-full" onClick={setCollapsed}>
+                        {collapsed ? <ChevronsRight /> : <ChevronsLeft />}
+                    </button>
+                </div>
 
-            <main>{children}</main>
+                <main>{children}</main>
+            </div>
         </div>
     );
 }
